@@ -9,8 +9,7 @@ import {
 @Entity()
 @Unique(['email'])
 export class User {
-  //@ts-ignore
-  @PrimaryGeneratedColumn('uuid', { default: () => 'uuid_generate_v4()' })
+  @PrimaryGeneratedColumn('uuid')
   @Generated('uuid')
   id: number;
 
@@ -19,4 +18,10 @@ export class User {
 
   @Column()
   password: string;
+
+  @Column()
+  fullName: string;
+
+  @Column()
+  role: string;
 }

@@ -11,8 +11,7 @@ import { ShopItemEntity } from './shopItem.entity';
 
 @Entity()
 export class Shop {
-  //@ts-ignore
-  @PrimaryGeneratedColumn('uuid', { default: () => 'uuid_generate_v4()' })
+  @PrimaryGeneratedColumn('uuid')
   @Generated('uuid')
   id: number;
 

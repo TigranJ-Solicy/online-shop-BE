@@ -20,9 +20,10 @@ import { ShopModule } from './shop/shop.module';
     }),
     AuthModule,
     UserModule,
-    ShopModule
+    ShopModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
+
 export class AppModule {}

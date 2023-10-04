@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, Param } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './create-user.dto';
 
@@ -6,13 +6,18 @@ import { CreateUserDto } from './create-user.dto';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('register')
-  async register(@Body() createUserDto: CreateUserDto) {
-    return this.userService.register(createUserDto);
-  }
-
   @Get()
   async findAll() {
     return this.userService.findAll();
+  }
+
+  @Get('me')
+  async findById(@Query('userId') userId: number) {
+    return this.userService.findById(userId);
+  }
+
+  @Get(':id')
+  async getUserById(@Param('id') id: number) {
+    return this.userService.findById(id);
   }
 }

@@ -13,27 +13,46 @@ export class UserService {
   ) {}
 
   async register(createUserDto: CreateUserDto): Promise<User> {
-    const newUser = this.userRepository.create(createUserDto);
+    try {
+      const newUser = this.userRepository.create(createUserDto);
 
-    newUser.password = await this.hashPassword(createUserDto.password);
+      newUser.password = await this.hashPassword(createUserDto.password);
 
-    return await this.userRepository.save(newUser);
+      return await this.userRepository.save(newUser);
+    } catch (error) {
+      throw new Error('Failed to create user');
+    }
   }
 
   private async hashPassword(password: string): Promise<string> {
-    const saltRounds = 10;
-    return await bcrypt.hash(password, saltRounds);
+    try {
+      const saltRounds = 10;
+      return await bcrypt.hash(password, saltRounds);
+    } catch (error) {
+      throw new Error('Failed to hash the password');
+    }
   }
-
   async findAll(): Promise<User[]> {
-    return this.userRepository.find();
+    try {
+      return this.userRepository.find();
+    } catch (error) {
+      throw new Error('Failed to fetch all users');
+    }
   }
 
   async findOne(email: string): Promise<User> {
-    return this.userRepository.findOne({ where: { email } });
+    try {
+      return this.userRepository.findOne({ where: { email } });
+    } catch (error) {
+      throw new Error('Failed to find the user by email');
+    }
   }
 
   async findById(id: number): Promise<User> {
-    return this.userRepository.findOne({ where: { id } });
+    try {
+      return this.userRepository.findOne({ where: { id } });
+    } catch (error) {
+      throw new Error('Failed to find the user by ID');
+    }
   }
 }

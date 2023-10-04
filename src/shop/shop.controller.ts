@@ -1,8 +1,8 @@
 import { Controller, Post, Body, Get, Param, Delete } from '@nestjs/common';
-import { ShopService } from './shop.service';
-import { Shop } from './shop.entity';
-import { ShopItemEntity } from './shopItem.entity';
 import { FindOneOptions } from 'typeorm';
+import { ShopService } from 'src/shop/shop.service';
+import { Shop } from 'src/shop/shop.entity';
+import { ShopItemEntity } from 'src/shop/shopItem.entity';
 
 @Controller('shops')
 export class ShopController {
@@ -30,7 +30,7 @@ export class ShopController {
     return this.shopService.getShopsByUserId(userId);
   }
 
-  @Post(':id/shop-items')
+  @Post(':id/shop-item')
   async addShopItemToShop(
     @Param('id') shopId: FindOneOptions<Shop>,
     @Body() shopItemData: ShopItemEntity,
@@ -43,7 +43,7 @@ export class ShopController {
     await this.shopService.deleteShop(id);
   }
 
-  @Delete(':shopId/shop-items/:itemId')
+  @Delete(':shopId/shop-item/:itemId')
   async deleteShopItem(
     @Param('shopId') shopId: FindOneOptions<Shop>,
     @Param('itemId') itemId: string,

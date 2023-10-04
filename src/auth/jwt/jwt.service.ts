@@ -8,11 +8,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly jwtService: JwtService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: 'chemasi',
+      secretOrKey: 'projectX77',
     });
-  }
-
-  async validate(payload: any) {
-    return { userId: payload.sub, username: payload.username };
   }
 }

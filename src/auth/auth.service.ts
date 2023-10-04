@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { User } from 'src/user/user.entity';
@@ -11,24 +15,39 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, password: string): Promise<User | null> {
-    const user = await this.userService.findOne(email);
+  async validateUser(email: string, password: string): Promise<User> {
+    try {
+      const user = await this.userService.findOne(email);
 
-    if (user && (await bcrypt.compare(password, user.password))) {
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+
+      if (!isPasswordValid) {
+        throw new UnauthorizedException('Invalid password');
+      }
+
       return user;
+    } catch (error) {
+      throw new UnauthorizedException('Authentication failed');
     }
-    return null;
   }
 
   async login(user: User) {
-    const existUser = await this.validateUser(user.email, user.password);
-    if (existUser) {
-      const payload = { email: existUser.email, sub: existUser.id };
-      return {
-        access_token: this.jwtService.sign(payload),
-        id: payload.sub,
-      };
+    try {
+      const existUser = await this.validateUser(user.email, user.password);
+
+      if (existUser) {
+        const payload = { email: existUser.email, sub: existUser.id };
+        return {
+          access_token: this.jwtService.sign(payload),
+          id: payload.sub,
+        };
+      }
+    } catch (error) {
+      throw new UnauthorizedException('Authentication failed');
     }
-    return;
   }
 }
