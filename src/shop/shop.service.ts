@@ -9,6 +9,8 @@ export class ShopService {
   constructor(
     @InjectRepository(Shop)
     private readonly shopRepository: Repository<Shop>,
+    @InjectRepository(ShopItemEntity)
+    private readonly shopItemRepository: Repository<ShopItemEntity>,
   ) {}
 
   async createShop(shopData: Partial<Shop>): Promise<Shop> {
@@ -20,9 +22,11 @@ export class ShopService {
     }
   }
 
-  async getShopById(shopId: FindOneOptions<Shop>): Promise<Shop> {
+  async getShopItemByShopId(
+    shopId: FindOneOptions<ShopItemEntity>,
+  ): Promise<ShopItemEntity> {
     try {
-      const shop = await this.shopRepository.findOne(shopId);
+      const shop = await this.shopItemRepository.findOne(shopId);
 
       if (!shop) {
         throw new NotFoundException('Shop not found');
@@ -55,17 +59,13 @@ export class ShopService {
   async addShopItem(
     shopId: FindOneOptions<Shop>,
     shopItemData: ShopItemEntity,
-  ): Promise<Shop> {
+  ): Promise<ShopItemEntity[]> {
     try {
-      const shop = await this.shopRepository.findOne(shopId);
-
-      if (!shop) {
-        throw new NotFoundException('Shop not found');
-      }
-
-      shop.shopItems.push(shopItemData);
-
-      return await this.shopRepository.save(shop);
+      const obj = {
+        ...shopItemData,
+        shopId,
+      };
+      return await this.shopItemRepository.save(obj as any);
     } catch (error) {
       throw new Error('Failed to add a shop item');
     }
@@ -108,6 +108,33 @@ export class ShopService {
       return await this.shopRepository.save(shop);
     } catch (error) {
       throw new Error('Failed to delete the shop item');
+    }
+  }
+}
+
+@Injectable()
+export class ShopItemService {
+  constructor(
+    @InjectRepository(ShopItemEntity)
+    private readonly shopItemRepository: Repository<ShopItemEntity>,
+  ) {}
+
+  async getShopItemByShopId(
+    shopId: FindOneOptions<ShopItemEntity>,
+  ): Promise<ShopItemEntity[]> {
+    console.log(shopId,"shopId");
+    
+    try {
+      const shop = await this.shopItemRepository.find(shopId);
+      console.log(shop,'shop');
+      
+      if (!shop) {
+        throw new NotFoundException('Shop not foundzzz');
+      }
+
+      return shop;
+    } catch (error) {
+      throw new NotFoundException('Shop not foundccc');
     }
   }
 }

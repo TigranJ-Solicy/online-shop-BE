@@ -24,6 +24,6 @@ export class Shop {
   @Column()
   image: string;
 
-  @OneToMany(() => ShopItemEntity, (item) => item.shop)
+  @OneToMany(() => ShopItemEntity, (shopItem) => shopItem.shop)
   shopItems: ShopItemEntity[];
 }

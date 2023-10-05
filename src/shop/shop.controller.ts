@@ -1,12 +1,15 @@
 import { Controller, Post, Body, Get, Param, Delete } from '@nestjs/common';
 import { FindOneOptions } from 'typeorm';
-import { ShopService } from 'src/shop/shop.service';
+import { ShopItemService, ShopService } from 'src/shop/shop.service';
 import { Shop } from 'src/shop/shop.entity';
 import { ShopItemEntity } from 'src/shop/shopItem.entity';
 
 @Controller('shops')
 export class ShopController {
-  constructor(private readonly shopService: ShopService) {}
+  constructor(
+    private readonly shopService: ShopService,
+    private readonly shopItemService: ShopItemService,
+  ) {}
 
   @Post()
   async createShop(@Body() shopData: Partial<Shop>): Promise<Shop> {
@@ -14,10 +17,10 @@ export class ShopController {
   }
 
   @Get(':id')
-  async getShop(
-    @Param('id') shopId: FindOneOptions<Shop>,
-  ): Promise<Shop | null> {
-    return this.shopService.getShopById(shopId);
+  async getShopItem(
+    @Param('id') shopId: FindOneOptions<ShopItemEntity>,
+  ): Promise<ShopItemEntity[] | null> {
+    return this.shopItemService.getShopItemByShopId(shopId);
   }
 
   @Get()
@@ -34,7 +37,7 @@ export class ShopController {
   async addShopItemToShop(
     @Param('id') shopId: FindOneOptions<Shop>,
     @Body() shopItemData: ShopItemEntity,
-  ): Promise<Shop | null> {
+  ): Promise<ShopItemEntity[] | null> {
     return this.shopService.addShopItem(shopId, shopItemData);
   }
 
