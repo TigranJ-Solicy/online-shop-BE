@@ -8,10 +8,13 @@ async function bootstrap() {
   const options = new DocumentBuilder()
     .setTitle('My API for online shop')
     .setVersion('1.0')
-    .addTag('Endpoints')
-    .build(); 
+    .addBearerAuth()
+    .build();
 
   const document = SwaggerModule.createDocument(app, options);
+
+  document.paths['/auth/login'].post.security = [];
+
   SwaggerModule.setup('api', app, document);
 
   await app.listen(5000);
