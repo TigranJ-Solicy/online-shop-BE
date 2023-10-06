@@ -71,9 +71,9 @@ export class ShopService {
     }
   }
 
-  async deleteShop(shopId: FindOneOptions<Shop>): Promise<void> {
+  async deleteShop(shopId: string): Promise<void> {
     try {
-      const shop = await this.shopRepository.findOne(shopId);
+      const shop = await this.shopRepository.findOneById(shopId);
 
       if (!shop) {
         throw new NotFoundException(`Shop with id ${shopId} not found.`);
@@ -85,27 +85,15 @@ export class ShopService {
     }
   }
 
-  async deleteShopItem(
-    shopId: FindOneOptions<Shop>,
-    itemId: string,
-  ): Promise<Shop> {
+  async deleteShopItem(shopId: string, itemId: string): Promise<any> {
     try {
-      const shop = await this.shopRepository.findOne(shopId);
+      const shop = await this.shopItemRepository.findOneById(itemId);
 
       if (!shop) {
         throw new NotFoundException(`Shop with id ${shopId} not found.`);
       }
 
-      const itemIndex = shop.shopItems.findIndex(
-        (item) => item.id.toString() == itemId,
-      );
-
-      if (itemIndex === -1) {
-        throw new NotFoundException(`Shop item with id ${itemId} not found.`);
-      }
-
-      shop.shopItems.splice(itemIndex, 1);
-      return await this.shopRepository.save(shop);
+      await this.shopItemRepository.remove(shop);
     } catch (error) {
       throw new Error('Failed to delete the shop item');
     }
@@ -122,12 +110,10 @@ export class ShopItemService {
   async getShopItemByShopId(
     shopId: FindOneOptions<ShopItemEntity>,
   ): Promise<ShopItemEntity[]> {
-    console.log(shopId,"shopId");
-    
     try {
       const shop = await this.shopItemRepository.find(shopId);
-      console.log(shop,'shop');
-      
+      console.log(shop, 'shop');
+
       if (!shop) {
         throw new NotFoundException('Shop not foundzzz');
       }
